@@ -1,21 +1,131 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { mobileRules, passwordRules } from "@/utils/rules";
+import { ref } from "vue";
+import { showToast } from "vant";
 
-const gender = ref(1)
-const show = ref(false)
+
+const mobile = ref('13230000001')
+const password = ref('abc12345')
+
+const isShow = ref(true)
+const agree = ref('false')
+
+const onSubmit = () => {
+  if (!agree.value) {
+    showToast('请登录')
+    return
+  }
+}
 </script>
 
 <template>
-  
-  <CpNavBar />
-  <CpRadioBtn 
-    v-model="gender"
-    :options="[
-      {label:'男', value: 1},
-      {label:'女', value:0}
-    ]"
-  />
-  <cp-icon @click="show = !show" :name="`login-eye-${show? 'on' : 'off'}`" ></cp-icon>
+  <div class="login-page">
+    <cp-nav-bar right-text="注册"></cp-nav-bar>
+    <div class="login-head">
+      <h3>密码登录</h3>
+      <a href="javascript:;">
+        <span>短信验证码登录</span>
+        <van-icon name="arrow"></van-icon>
+      </a>
+    </div>
+    <!-- form 表单 -->
+    <van-form autocomplete="off" @submit="onSubmit">
+      <van-field 
+        placeholder="请输入手机号" 
+        type="tel"
+        :rules="mobileRules"
+        v-model="mobile"
+       />
+      <van-field 
+        placeholder="请输入密码" 
+        :type="isShow ? 'text' : 'password'"
+        :rules="passwordRules"
+        v-model="password"
+      >
+        <template #button>
+          <cp-icon @click="isShow = !isShow" :name="isShow ? 'login-eye-off' : 'login-eye-on'" />
+        </template>
+      </van-field>
+      
+      <div class="cp-cell">
+        <van-checkbox v-model="agree">
+          <span>我已同意</span>
+          <a href="javascript:;">用户协议</a>
+          <span>及</span>
+          <a href="javascript:;">隐私条款</a>
+        </van-checkbox>
+      </div>
+      <div class="cp-cell">
+        <van-button block round type="primary"  native-type="submit">登 录</van-button>
+      </div>
+      <div class="cp-cell">
+        <a href="javascript:;">忘记密码？</a>
+      </div>
+    </van-form>
+
+    <div class="login-other">
+      <van-divider>第三方登录</van-divider>
+      <div class="icon">
+        <img src="@/assets/qq.svg" alt="" />
+      </div>
+    </div>
+  </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.login {
+  &-page {
+    padding-top: 46px;
+  }
+  &-head {
+    display: flex;
+    padding: 30px 30px 50px;
+    justify-content: space-between;
+    align-items: flex-end;
+    line-height: 1;
+    h3 {
+      font-weight: normal;
+      font-size: 24px;
+    }
+    a {
+      font-size: 15px;
+    }
+  }
+  &-other {
+    margin-top: 60px;
+    padding: 0 30px;
+    .icon {
+      display: flex;
+      justify-content: center;
+      img {
+        width: 36px;
+        height: 36px;
+        padding: 4px;
+      }
+    }
+  }
+}
+.van-form {
+  padding: 0 14px;
+  .cp-cell {
+    height: 52px;
+    line-height: 24px;
+    padding: 14px 16px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    .van-checkbox {
+      a {
+        color: var(--cp-primary);
+        padding: 0 5px;
+      }
+    }
+  }
+  .btn-send {
+    color: var(--cp-primary);
+    &.active {
+      color: rgba(22,194,163,0.5);
+    }
+  }
+}
+</style>
