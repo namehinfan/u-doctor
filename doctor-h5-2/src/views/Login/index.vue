@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { showSuccessToast, showToast } from "vant";
 import { useRouter } from "vue-router";
 import { loginAPI } from "@/services/user";
+import { useUserStore } from "@/stores"
 
 
 const mobile = ref('13230000001')
@@ -13,14 +14,14 @@ const isShow = ref(true)
 const agree = ref('false')
 
 const router = useRouter()
+const store = useUserStore()
 const onSubmit = async() => {
   if (!agree.value) {
     showToast('请登录')
     return
   }
-  const res = await loginAPI(mobile.value, password.value)
-    console.log('res ---> ', res)
-    localStorage.setItem('ht-patients-83', JSON.stringify(res.data))
+    const res = await loginAPI(mobile.value, password.value)
+    store.saveUser(res.data)
     showSuccessToast('登录成功')
     router.push('/')
   }

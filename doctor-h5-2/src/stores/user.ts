@@ -8,14 +8,14 @@ export const useUserStore = defineStore(
     // 用户信息
     const user = ref<User>()
     // 设置用户，登录后使用
-    const setUser = (u: User) => {
+    const saveUser = (u: User) => {
       user.value = u
     }
     // 清空用户，退出后使用
     const delUser = () => {
       user.value = undefined
     }
-    return { user, setUser, delUser }
+    return { user, saveUser, delUser }
   },
   {
     persist: true
