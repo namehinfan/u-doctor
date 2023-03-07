@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { mobileRules, passwordRules } from "@/utils/rules";
 import { ref } from "vue";
-import { showToast } from "vant";
+import { showSuccessToast, showToast } from "vant";
+import { useRouter } from "vue-router";
+import { loginAPI } from "@/services/user";
 
 
 const mobile = ref('13230000001')
@@ -10,12 +12,18 @@ const password = ref('abc12345')
 const isShow = ref(true)
 const agree = ref('false')
 
-const onSubmit = () => {
+const router = useRouter()
+const onSubmit = async() => {
   if (!agree.value) {
     showToast('请登录')
     return
   }
-}
+  const res = await loginAPI(mobile.value, password.value)
+    console.log('res ---> ', res)
+    localStorage.setItem('ht-patients-83', JSON.stringify(res.data))
+    showSuccessToast('登录成功')
+    router.push('/')
+  }
 </script>
 
 <template>
