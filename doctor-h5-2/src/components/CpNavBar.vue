@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import router from '@/router';
+// import router from '@/router';
+import { useRouter } from 'vue-router'
 
 interface Props {
   title?: string
@@ -8,12 +9,13 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-
+const emit = defineEmits<Emits>()
+const router = useRouter()
 interface Emits {
   (e: 'click-right'): void
 }
 
-const emit = defineEmits<Emits>()
+
 
 const clickLeft = () => {
   if (props.onBack) {
