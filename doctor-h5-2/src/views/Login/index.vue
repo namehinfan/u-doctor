@@ -1,15 +1,35 @@
 <script setup lang="ts">
-import { mobileRules, passwordRules } from "@/utils/rules";
-import { ref } from "vue";
+import { mobileRules, passwordRules, codeRules } from "@/utils/rules";
+import { onUnmounted, ref } from "vue";
 import { showSuccessToast, showToast } from "vant";
 import { useRouter } from "vue-router";
-import { loginAPI } from "@/services/user";
+import { loginAPI, loginByCodeAPI, sendCodeAPI } from "@/services/user";
 import { useUserStore } from "@/stores"
 
 
 const mobile = ref('13230000001')
 const password = ref('abc12345')
 
+const isPass = ref(true);
+const changePass = () => {
+  isPass.value = !isPass.value
+}
+const code = ref('')
+const second = ref(0)
+let timerId: number
+const onSendCode = async() => {
+  const res = await sendCodeAPI(mobile.value)
+  code.value = res.data.code
+  second.value = 60
+  timerId = setInterval(() => {
+    second.value--
+    if(second.value === 0) clearInterval
+  }, 1000)
+}
+
+onUnmounted(() => {
+  clearInterval(timerId)
+})
 const isShow = ref(true)
 const agree = ref('false')
 
@@ -17,10 +37,12 @@ const router = useRouter()
 const store = useUserStore()
 const onSubmit = async() => {
   if (!agree.value) {
-    showToast('请登录')
+    showToast('请勾选同意登录协议')
     return
   }
-    const res = await loginAPI(mobile.value, password.value)
+    const res = isPass.value
+      ? await loginAPI(mobile.value, password.value)
+      : await loginByCodeAPI(mobile.value, code.value)
     store.saveUser(res.data)
     showSuccessToast('登录成功')
     router.push('/')
@@ -31,9 +53,9 @@ const onSubmit = async() => {
   <div class="login-page">
     <cp-nav-bar right-text="注册"></cp-nav-bar>
     <div class="login-head">
-      <h3>密码登录</h3>
-      <a href="javascript:;">
-        <span>短信验证码登录</span>
+      <h3>{{isPass ? '密码登录' : '短信验证码'}}</h3>
+      <a href="javascript:;" @click="changePass">
+        <span>{{isPass ? '短信验证码' : '密码登录'}}</span>
         <van-icon name="arrow"></van-icon>
       </a>
     </div>
@@ -45,7 +67,8 @@ const onSubmit = async() => {
         :rules="mobileRules"
         v-model="mobile"
        />
-      <van-field 
+      <van-field
+        v-if="isPass" 
         placeholder="请输入密码" 
         :type="isShow ? 'text' : 'password'"
         :rules="passwordRules"
@@ -55,7 +78,17 @@ const onSubmit = async() => {
           <cp-icon @click="isShow = !isShow" :name="isShow ? 'login-eye-off' : 'login-eye-on'" />
         </template>
       </van-field>
-      
+      <van-field
+        v-if="!isPass" 
+        v-model="code"
+        :rules="codeRules"
+        placeholder="请输入验证码" 
+      >
+        <template #button>
+          <span v-show="second === 0" @click="onSendCode" class="send-code">发送验证码</span>
+          <span v-show="second > 0">{{ second }}秒后获取</span>
+        </template>
+      </van-field>
       <div class="cp-cell">
         <van-checkbox v-model="agree">
           <span>我已同意</span>
@@ -135,6 +168,10 @@ const onSubmit = async() => {
     &.active {
       color: rgba(22,194,163,0.5);
     }
+  }
+  .send-code {
+    --cp-primary: #16c2a3;
+    color: var(--cp-primary)
   }
 }
 </style>

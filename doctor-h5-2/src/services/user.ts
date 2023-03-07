@@ -7,3 +7,18 @@ export const loginAPI = (mobile: string, password: string) => {
     data: { mobile, password }
   })
 }
+
+export const sendCodeAPI = (mobile: string, type = "login") => {
+  return request({
+    url: "/code",
+    params: { mobile, type },
+  });
+};
+
+export const loginByCodeAPI = (mobile: string, code: string) => {
+  return request({
+    url: "/login",
+    method: "post",
+    data: { mobile, code },
+  });
+};
