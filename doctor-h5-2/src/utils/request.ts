@@ -1,9 +1,10 @@
+import router from '@/router'
 import { useUserStore } from '@/stores'
 import axios from 'axios'
+import { showFailToast, showToast } from 'vant'
 
 export const baseURL = 'https://consult-api.itheima.net/'
 const request = axios.create({
-  // TODO 1. 基础地址，超时时间
   baseURL,
   timeout: 10000
 })
@@ -23,13 +24,26 @@ request.interceptors.request.use(
 )
 
 request.interceptors.response.use(
-  (res) => {
-    // TODO 3. 处理业务失败
-    // TODO 4. 摘取核心响应数据
-    return res
+  function (res) {
+    if (res.data?.code !== 10000) {
+        showFailToast(res.data?.message)
+        return Promise.reject(res.data)
+      }
+    return res.data
   },
-  (err) => {
-    // TODO 5. 处理401错误
+  function (err) {
+    if (err.response.status === 401) {
+			 // 提示用户
+      showToast('登录超时, 请重新登录')
+      // 删除用户信息
+      const store = useUserStore()
+      store.delUser()
+      // 跳转登录，带上接口失效所在页面的地址，登录完成后回跳使用
+      router.push({
+        path: '/login',
+        query: { returnPath: router.currentRoute.value.fullPath }
+      })
+    }
     return Promise.reject(err)
   }
 )

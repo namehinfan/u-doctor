@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
+import { useUserStore } from '@/stores';
 
 
 const router = createRouter({
@@ -41,8 +42,11 @@ NProgress.configure({
   showSpinner: false,
 });
 
-router.beforeEach(() => {
+router.beforeEach((to) => {
+  const store = useUserStore();
+  const whiteList = ["/login"];
   NProgress.start()
+  if (!store.userInfo?.token && !whiteList.includes(to.path)) return "/login";
 })
 
 router.afterEach((to) => {
