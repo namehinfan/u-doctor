@@ -22,3 +22,9 @@ export const loginByCodeAPI = (mobile: string, code: string) => {
     data: { mobile, code },
   });
 };
+
+export const getUserInfoAPI = () => {
+  return request({
+    url: "/patient/myUser",
+  });
+};

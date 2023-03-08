@@ -1,21 +1,28 @@
+import { useUserStore } from '@/stores'
 import axios from 'axios'
 
 export const baseURL = 'https://consult-api.itheima.net/'
-const instance = axios.create({
+const request = axios.create({
   // TODO 1. 基础地址，超时时间
   baseURL,
   timeout: 10000
 })
 
-instance.interceptors.request.use(
-  (config) => {
-    // TODO 2. 携带token
+request.interceptors.request.use(
+  function (config) {
+    const store = useUserStore()
+    const token = store.userInfo?.token
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
     return config
   },
-  (err) => Promise.reject(err)
+  function (err) {
+    return Promise.reject(err)
+  }
 )
 
-instance.interceptors.response.use(
+request.interceptors.response.use(
   (res) => {
     // TODO 3. 处理业务失败
     // TODO 4. 摘取核心响应数据
@@ -27,4 +34,4 @@ instance.interceptors.response.use(
   }
 )
 
-export default instance
+export default request

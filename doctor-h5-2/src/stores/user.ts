@@ -3,21 +3,19 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useUserStore = defineStore(
-  'cp-user',
+  'user',
   () => {
     // 用户信息
-    const user = ref<User>()
+    const userInfo = ref<User>()
     // 设置用户，登录后使用
     const saveUser = (u: User) => {
-      user.value = u
+      userInfo.value = u
     }
     // 清空用户，退出后使用
     const delUser = () => {
-      user.value = undefined
+      userInfo.value = undefined
     }
-    return { user, saveUser, delUser }
+    return { userInfo, saveUser, delUser }
   },
-  {
-    persist: true
-  }
+  { persist: true}
 )

@@ -44,3 +44,7 @@ ol {
     // 默认按钮文字大小
     --van-button-normal-font-size: 16px;
 }
+
+#nprogress .bar {
+  background-color: var(--cp-primary) !important;
+}
