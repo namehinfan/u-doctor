@@ -1,3 +1,4 @@
+import type { AddPatient } from '@/types/user';
 import request from '@/utils/request'
 
 export const loginAPI = (mobile: string, password: string) => {
@@ -34,3 +35,6 @@ export const getPatientListAPI = () => {
   return request({ url: "/patient/mylist" });
 };
 
+export const addPatientAPI = (data: AddPatient) => {
+  return request({ url: 'patient/add', method: 'post', data})
+}

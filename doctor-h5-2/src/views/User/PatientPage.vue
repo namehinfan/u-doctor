@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getPatientListAPI } from '@/services/user';
+import { addPatientAPI, getPatientListAPI } from '@/services/user';
 import type { AddPatient, Patient } from '@/types/user';
 import IdValidator from 'id-validator';
 import { showToast } from 'vant';
@@ -47,7 +47,7 @@ watch(isShow,(newValue) => {
   }
 )
 
-const onSubmit = () => {
+const onSubmit = async() => {
   if(!formData.value.name) {
     showToast('请填写姓名')
     return
@@ -64,6 +64,10 @@ const onSubmit = () => {
     showToast('性别与身份证号码不匹配')
     return
   }
+  await addPatientAPI(formData.value)
+  isShow.value = false
+  showToast("新增成功")
+  loadData()
 }
 </script>
 
