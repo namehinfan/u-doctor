@@ -34,6 +34,11 @@ const router = createRouter({
       path: '/login', 
       component:  () => import('@/views/Login/index.vue'),
       meta: { title: '登录' }
+    },
+    {
+      path: '/user/patient',
+      component: () => import('@/views/User/PatientPage.vue'),
+      meta: { title: '家庭档案' }
     }
   ]
 })

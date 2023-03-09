@@ -28,3 +28,9 @@ export const getUserInfoAPI = () => {
     url: "/patient/myUser",
   });
 };
+
+/** 获取患者列表 */
+export const getPatientListAPI = () => {
+  return request({ url: "/patient/mylist" });
+};
+
