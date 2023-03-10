@@ -1,3 +1,4 @@
+import type { Knowledge } from '@/types/consult';
 import type { AddPatient } from '@/types/user';
 import request from '@/utils/request'
 
@@ -46,3 +47,4 @@ export const editPatientAPI = (data: AddPatient) => {
 export const delPatientByIdAPI = (id: string) => {
   return request({ url: `patient/del/${id}`, method: 'delete'})
 }
+
