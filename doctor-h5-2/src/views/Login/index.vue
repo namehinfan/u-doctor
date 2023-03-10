@@ -2,7 +2,7 @@
 import { mobileRules, passwordRules, codeRules } from "@/utils/rules";
 import { onUnmounted, ref } from "vue";
 import { showSuccessToast, showToast } from "vant";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { loginAPI, loginByCodeAPI, sendCodeAPI } from "@/services/user";
 import { useUserStore } from "@/stores"
 
@@ -34,6 +34,10 @@ const isShow = ref(true)
 const agree = ref('false')
 
 const router = useRouter()
+const route = useRoute()
+console.log(route.query);
+
+
 const store = useUserStore()
 const onSubmit = async() => {
   if (!agree.value) {
@@ -45,6 +49,13 @@ const onSubmit = async() => {
       : await loginByCodeAPI(mobile.value, code.value)
     store.saveUser(res.data)
     showSuccessToast('登录成功')
+
+    const returnUrl = route.query.returnUrl
+    if (returnUrl) {
+      router.push(returnUrl as string)
+    } else {
+      router.push('/')
+    }
     router.push('/')
   }
 </script>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { addPatientAPI, editPatientAPI, getPatientListAPI } from '@/services/user';
+import { addPatientAPI, delPatientByIdAPI, editPatientAPI, getPatientListAPI } from '@/services/user';
 import type { AddPatient, Patient } from '@/types/user';
 import IdValidator from 'id-validator';
-import { showSuccessToast, showToast } from 'vant';
+import { showConfirmDialog, showSuccessToast, showToast } from 'vant';
 import { computed, onMounted, ref, watch } from 'vue';
 
 const idValidator = new IdValidator()
@@ -76,6 +76,17 @@ const showEdit = (item: Patient) => {
   
   formData.value = { id, name, idCard, gender, defaultFlag }
 }
+
+const delById = async () => {
+  await showConfirmDialog({
+    title:'温馨提示',
+    message: `您确定要删除 ${formData.value.name} 患者信息吗？`
+  })
+  await delPatientByIdAPI(formData.value.id as string)
+  isShow.value = false
+  loadData()
+  showSuccessToast("删除成功")
+}
 </script>
 
 
@@ -101,7 +112,7 @@ const showEdit = (item: Patient) => {
     </div>
     <van-popup v-model:show="isShow" position="right">
       <cp-nav-bar 
-        title="添加患者" 
+        :title="formData.id ? '编辑患者' : '添加患者'"
         right-text="保存" 
         :on-back="() => {isShow = false}"
         @click-right="onSubmit"
@@ -133,6 +144,9 @@ const showEdit = (item: Patient) => {
           </template>
         </van-field>
       </van-form>
+      <van-action-bar v-if="formData.id">
+        <van-action-bar-button @click="delById">删除</van-action-bar-button>
+      </van-action-bar>
     </van-popup>
   </div>
 </template>
@@ -145,6 +159,15 @@ const showEdit = (item: Patient) => {
       width: 100%;
       height: 100%;
     }
+  }
+}
+// 底部操作栏
+.van-action-bar {
+  padding: 0 10px;
+  margin-bottom: 10px;
+  .van-button {
+    color: var(--cp-price);
+    background-color: var(--cp-bg);
   }
 }
 .patient-list {
