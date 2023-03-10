@@ -38,3 +38,7 @@ export const getPatientListAPI = () => {
 export const addPatientAPI = (data: AddPatient) => {
   return request({ url: 'patient/add', method: 'post', data})
 }
+
+export const editPatientAPI = (data: AddPatient) => {
+  return request({ url: 'patient/update', method: 'put', data})
+}

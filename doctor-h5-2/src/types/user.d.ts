@@ -121,7 +121,7 @@ export interface Patient {
   /**
    * 性别 1男 0女
    */
-  gender?: number;
+  gender: number;
   /**
    * 性别值
    */
@@ -137,5 +137,6 @@ export interface Patient {
   name: string;
 }
 
-export type AddPatient = Pick<Patient, "name" | "idCard" | "gender" | "defaultFlag"> & { 		     gender: number 
+export type AddPatient = Pick<Patient, "name" | "idCard" | "gender" | "defaultFlag"> & {
+  id?: string 		    
 }

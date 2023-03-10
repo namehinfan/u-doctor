@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { addPatientAPI, getPatientListAPI } from '@/services/user';
+import { addPatientAPI, editPatientAPI, getPatientListAPI } from '@/services/user';
 import type { AddPatient, Patient } from '@/types/user';
 import IdValidator from 'id-validator';
-import { showToast } from 'vant';
+import { showSuccessToast, showToast } from 'vant';
 import { computed, onMounted, ref, watch } from 'vue';
 
 const idValidator = new IdValidator()
@@ -49,25 +49,32 @@ watch(isShow,(newValue) => {
 
 const onSubmit = async() => {
   if(!formData.value.name) {
-    showToast('请填写姓名')
-    return
+    return showToast('请填写姓名')
+    
   }
   if (!formData.value.idCard){
-    showToast('请填写身份证号')
-    return
+    return showToast('请填写身份证号')
   }
   if(!idValidator.isValid(formData.value.idCard)) {
-    showToast('身份证号码不正确')
-    return
+    return showToast('身份证号码不正确')
   }
-  if(idValidator.getInfo(formData.value.idCard).sex !== formData.value.gender) {
-    showToast('性别与身份证号码不匹配')
-    return
+  const {sex} = idValidator.getInfo(formData.value.idCard)
+  if (sex !== formData.value.gender) {
+    return showToast('性别与身份证号码不匹配')
   }
-  await addPatientAPI(formData.value)
+  // await addPatientAPI(formData.value)
+  formData.value.id ? await editPatientAPI(formData.value) : await addPatientAPI(formData.value)
   isShow.value = false
-  showToast("新增成功")
+  showSuccessToast(formData.value.id ? "修改成功" : "新增成功")
   loadData()
+}
+
+const showEdit = (item: Patient) => {
+  isShow.value = true
+  const { id, name, idCard, gender, defaultFlag } = item
+  console.log(item);
+  
+  formData.value = { id, name, idCard, gender, defaultFlag }
 }
 </script>
 
@@ -83,7 +90,7 @@ const onSubmit = async() => {
           <span>{{ item.genderValue }}</span>
           <span>{{ item.age }}岁</span>
         </div>
-        <div class="icon"><cp-icon name="user-edit" /></div>
+        <div class="icon"><cp-icon name="user-edit" @click="showEdit(item)"/></div>
         <div class="tag" v-show="item.defaultFlag === 1">默认</div>
       </div>
       <div class="patient-add" v-show="list.length < 6" @click="isShow = true">
