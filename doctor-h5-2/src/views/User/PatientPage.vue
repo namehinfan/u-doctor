@@ -1,21 +1,43 @@
 <script setup lang="ts">
 import { addPatientAPI, delPatientByIdAPI, editPatientAPI, getPatientListAPI } from '@/services/user';
+import { useConsultStore } from '@/stores';
 import type { AddPatient, Patient } from '@/types/user';
 import IdValidator from 'id-validator';
 import { showConfirmDialog, showSuccessToast, showToast } from 'vant';
 import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
+const route = useRoute()
+const { isSelect } = route.query
+const store = useConsultStore()
+const router = useRouter()
 const idValidator = new IdValidator()
 
 const list = ref<Patient[]>([])
 const loadData = async() => {
   const res = await getPatientListAPI()
   list.value = res.data
+  if(!list.value.length || !isSelect) return
+  const defaultItem = list.value.find((item) => item.defaultFlag === 1)
+  if (!defaultItem) {
+    selectId.value = list.value[0].id
+  } else {
+    selectId.value = defaultItem.id
+  }
+}
+
+const selectId = ref('')
+const setId = (id: string) => {
+  selectId.value = id
+}
+
+const onNext = () => {
+  if (!selectId.value) return showToast('请选择就诊患者')
+  store.setPatientId(selectId.value)
+  router.push('/consult/pay')
 }
 
 onMounted(loadData)
-
-
 
 const options = [
   { label: "男", value: 1 },
@@ -37,7 +59,7 @@ const defaultFlag = computed({
   set(value: boolean) {
     formData.value.defaultFlag = value ? 1 : 0;
   },
-});
+})
 
 const isShow = ref(false)
 watch(isShow,(newValue) => {
@@ -92,9 +114,20 @@ const delById = async () => {
 
 <template>
   <div class="patient-page">
-    <cp-nav-bar title="家庭档案" />
+    <cp-nav-bar :title="isSelect ? '选择患者': '家庭档案'" />
+     <!-- 头部提示 -->
+     <div class="patient-change" v-if="isSelect">
+      <h3>请选择患者信息</h3>
+      <p>以便医生给出更准确的治疗，信息仅医生可见</p>
+    </div>
     <div class="patient-list">
-      <div class="patient-item" v-for="item in list" :key="item.id">
+      <div 
+        class="patient-item" 
+        v-for="item in list" 
+        :key="item.id"
+        @click="setId(item.id)"
+        :class="{ selected: selectId === item.id}"
+      >
         <div class="info" >
           <span class="name">{{item.name}}</span>
           <span class="id">{{ item.idCard.replace(/^(\d{6})\d{8}(\d{4})$/, '\$1******\$2') }}</span>
@@ -109,6 +142,10 @@ const delById = async () => {
         <p>添加患者</p>
       </div>
       <div class="patient-tip">最多可添加 6 人</div>
+    </div>
+    <!-- 底部按钮 -->
+    <div class="patient-next" v-if="isSelect">
+      <van-button type="primary"  round block @click="onNext">下一步</van-button>
     </div>
     <van-popup v-model:show="isShow" position="right">
       <cp-nav-bar 
@@ -161,6 +198,27 @@ const delById = async () => {
     }
   }
 }
+.patient-change {
+  padding: 15px;
+  > h3 {
+    font-weight: normal;
+    margin-bottom: 5px;
+  }
+  > p {
+    color: var(--cp-text3);
+  }
+}
+.patient-next {
+  padding: 15px;
+  background-color: #fff;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 80px;
+  box-sizing: border-box;
+}
+
 // 底部操作栏
 .van-action-bar {
   padding: 0 10px;

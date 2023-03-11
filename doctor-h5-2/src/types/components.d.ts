@@ -9,3 +9,8 @@ declare module 'vue' {
     CpIcon: typeof CpIcon
   }
 }
+
+export type ConsultIllness = Pick<
+  PartialConsult,
+  'illnessDesc' | 'illnessTime' | 'consultFlag' | 'pictures'
+>

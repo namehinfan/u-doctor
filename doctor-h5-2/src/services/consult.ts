@@ -15,5 +15,10 @@ export const followAPI = (id: string, type: FollowType = 'doc') => {
 
 export const getDepsAPI = () => request({ url: '/dep/all' })
 
+export const uploadAPI = (file: File) => {
+  const fd = new FormData()
+  fd.append('file', file)
+  return request ({ url: 'upload', method: 'post', data: fd })
+}
 
 

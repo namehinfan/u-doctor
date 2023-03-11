@@ -143,3 +143,8 @@ export interface SubDep {
   name: string
 }
 
+export type ConsultIllness = Pick<
+  PartialConsult,
+  'illnessDesc' | 'illnessTime' | 'consultFlag' | 'pictures'
+>
+
