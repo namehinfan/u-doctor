@@ -1,4 +1,27 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import DoctorCard from './DoctorCard.vue'
+import { useWindowSize } from '@vueuse/core'
+import type { Doctor } from '@/types/consult';
+import { getDoctorsAPI } from '@/services/consult'
+import { onMounted, ref } from 'vue';
+
+const { width } = useWindowSize()
+
+const list = ref<Doctor[]>([])
+const loadData = async () => {
+  const res = await getDoctorsAPI()
+  list.value = res.data.rows
+}
+
+onMounted(loadData)
+
+const onFollowById = (id: string) => {
+  const index = list.value.findIndex((item) => {
+    return item.id === id
+  })
+  list.value[index].likeFlag = list.value[index].likeFlag ? 0 : 1
+}
+</script>
 
 <template>
   <div class="follow-doctor">
@@ -8,6 +31,12 @@
     </div>
     <div class="body">
       <!-- swipe 组件 -->
+      <van-swipe :width="(150/375) * width" :showIndicators="false" :loop="false">
+        <van-swipe-item v-for="item in list" :key="item.id">
+          <DoctorCard :item="item" @followById="onFollowById"/>
+           <!-- <DoctorCard :item="item" /> -->
+        </van-swipe-item>
+      </van-swipe>
     </div>
   </div>
 </template>

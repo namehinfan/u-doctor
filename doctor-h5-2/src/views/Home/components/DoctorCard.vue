@@ -1,14 +1,49 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import type { Doctor } from '@/types/consult'
+import { followAPI } from '@/services/consult'
+import { showToast } from 'vant';
+import { ref } from 'vue';
+
+const props = defineProps<{item:Doctor}>()
+
+interface Emits {
+  (name: 'followById', id: string): void
+}
+const emit = defineEmits<Emits>()
+const follow = async () => {
+  await followAPI(props.item.id)
+  showToast(props.item.likeFlag ? '取消关注' : '关注成功')
+  emit('followById', props.item.id)
+}
+// const loading = ref(false)
+// const follow = async (item: Doctor) => {
+//   loading.value = true
+//   try {
+//     await followAPI(item.id)
+//     item.likeFlag = item.likeFlag === 1 ? 0 : 1
+//   } finally {
+//     loading.value = false
+//   }
+// }
+</script>
 <template>
   <div class="doctor-card">
     <van-image
       round
-      src="https://yanxuan-item.nosdn.127.net/3cb61b3fd4761555e56c4a5f19d1b4b1.png"
+      :src="item.avatar"
     />
-    <p class="name">周医生</p>
-    <p class="van-ellipsis">积水潭医院 神经内科</p>
-    <p>副主任医师</p>
-    <van-button round size="small" type="primary">+ 关注</van-button>
+    <p class="name">{{ item.name }}</p>
+    <p class="van-ellipsis">{{ item.hospitalName }} {{ item.depName }}</p>
+    <p>{{ item.positionalTitles }}</p>
+    <van-button 
+      @click="follow"
+      round 
+      size="small" 
+      type="primary" 
+      :plain="!item.likeFlag"
+    >
+      {{ item.likeFlag ? "已关注" : "+ 关注" }}
+    </van-button>
   </div>
 </template>
 <style scoped lang="scss">
