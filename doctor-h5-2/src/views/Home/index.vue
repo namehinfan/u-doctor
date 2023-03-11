@@ -1,10 +1,14 @@
 <script lang="ts" setup>
+import { ConsultType } from '@/enums'
 import type { KnowledgeType } from '@/types/consult';
 import { ref } from 'vue';
 import FollowDoctor from './components/FollowDoctor.vue';
 import KnowledgeList from './components/KnowledgeList.vue';
+import { useConsultStore } from '@/stores'
+
 
 const active = ref<KnowledgeType>('like')
+const store = useConsultStore()
 </script>
 
 <template>
@@ -28,7 +32,11 @@ const active = ref<KnowledgeType>('like')
           </router-link>
         </van-col>
         <van-col span="8">
-          <router-link to="/consult/fast" class="nav">
+          <router-link 
+            to="/consult/fast" 
+            class="nav"
+            @click="store.setType(ConsultType.Fast)"
+          >
             <cp-icon name="home-graphic"></cp-icon>
             <p class="title">极速问诊</p>
             <p class="desc">20s医生极速回复</p>

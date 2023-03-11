@@ -13,5 +13,7 @@ export const followAPI = (id: string, type: FollowType = 'doc') => {
    request({ url: "/like", method: "post", data: { id, type } })
 }
 
+export const getDepsAPI = () => request({ url: '/dep/all' })
+
 
 
