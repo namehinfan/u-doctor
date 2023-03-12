@@ -1,13 +1,21 @@
 import type { ConsultType } from './../enums'
 import type { ConsultIllness, PartialConsult } from './../types/consult'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 export const useConsultStore = defineStore(
   'cp-consult',
   () => {
     const consult = ref<PartialConsult>({})
 
+    const isNotEmpty = computed(() => {
+      console.log(consult.value)
+      return (
+        consult.value.illnessDesc ||
+        consult.value.illnessTime ||
+        consult.value.consultFlag !== undefined
+      )
+    })
     const setType = (type: ConsultType) => {
       consult.value.type = type
     }
@@ -32,7 +40,13 @@ export const useConsultStore = defineStore(
       consult.value.patientId = id
     }
 
-    return { consult, setType, setIllnessType, setDepId, setIllness, setPatientId }
+    const clear = () => {
+      consult.value = {}
+    }
+
+    return { consult, setType, setIllnessType, setDepId, setIllness, setPatientId,
+      clear, isNotEmpty
+    }
   },    
   { persist: true }
 )

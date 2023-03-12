@@ -71,7 +71,7 @@ const onNext = () => {
 }
 
 onMounted(() => {
-  if (store.consult.illnessDesc) {
+  if (store.isNotEmpty) {
     showConfirmDialog({
       title: '温馨提示',
       message: '是否恢复您之前填写的病情情况？',
