@@ -50,3 +50,8 @@ export type PayParams = {
 export const getOrderPayUrl = (data: PayParams) => {
   return request({ url: '/patient/consult/pay', method: 'post', data })
 }
+
+/** 获取订单详情API */
+export const getOrderDetailAPI = (orderId: string) => {
+  return request({ url: '/patient/consult/order/detail', params: { orderId } })
+}

@@ -9,7 +9,6 @@ export const useConsultStore = defineStore(
     const consult = ref<PartialConsult>({})
 
     const isNotEmpty = computed(() => {
-      console.log(consult.value)
       return (
         consult.value.illnessDesc ||
         consult.value.illnessTime ||

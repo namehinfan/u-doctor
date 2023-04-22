@@ -16,7 +16,9 @@ export default defineConfig({
     open: true
   },
   plugins: [
-    vue(),
+    vue({
+      reactivityTransform: true
+    }),
     // 默认会自动导入components下的组件
     // 自动导入的插件，解析器可以是 vant element and-vue
     Components({

@@ -20,8 +20,6 @@ const total = ref(999999)
 
 const onLoad = async () => {
   const res = await getKnowledgePageAPI(params.value)
-  console.log(res);
-  
   params.value.current++
   loading.value = false
   list.value.push(...res.data.rows)

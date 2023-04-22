@@ -35,9 +35,6 @@ const agree = ref('false')
 
 const router = useRouter()
 const route = useRoute()
-console.log(route.query);
-
-
 const store = useUserStore()
 const onSubmit = async() => {
   if (!agree.value) {

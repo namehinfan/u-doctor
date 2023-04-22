@@ -94,8 +94,6 @@ const onSubmit = async() => {
 const showEdit = (item: Patient) => {
   isShow.value = true
   const { id, name, idCard, gender, defaultFlag } = item
-  console.log(item);
-  
   formData.value = { id, name, idCard, gender, defaultFlag }
 }
 
